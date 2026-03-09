@@ -45,8 +45,12 @@ Instead of relying on basic API wrappers, this project integrates standard Compu
                          ├── EasyOCR (Text)             ├── Llama 3.3 70B
                          └── K-Means + HSV (Colors)     └── JSON Output
 ```
-🔧 Tech StackCategory
-TechnologiesFrontend UIStreamlit, PlotlyComputer VisionOpenCV, YOLOv8 (ultralytics), EasyOCR, scikit-learnGenerative AIGroq API (Llama 3.3 70B Versatile)InfrastructureDuckDB, Docker, Hugging Face Spaces
+## 🔧 Tech Stack
+
+* 🎨 **Frontend UI:** Streamlit, Plotly
+* 👁️ **Computer Vision:** OpenCV, YOLOv8 (`ultralytics`), EasyOCR, `scikit-learn`
+* 🧠 **Generative AI:** Groq API (Llama 3.3 70B Versatile)
+* ⚙️ **Infrastructure:** DuckDB, Docker, Hugging Face Spaces
 
 🚀 Quick Start (Local Development)
 Want to run this on your own machine? Follow these steps:
@@ -71,15 +75,12 @@ Mac / Linux:
 export GROQ_API_KEY=your_api_key_here
 ```
 4. Fire it up
-
-Bash
 ```
 streamlit run app.py
-
----
+```
 
 ## 👨‍💻 About the Author
-```
+
 **Watcharapon Anaketanaset** *Master's Student in Data Science (Germany) | Ex-Sales Engineer (Cutting Tools)*
 
 With over a decade of experience bridging technical sales and the Japanese manufacturing sector, I am now leveraging advanced data science to solve real-world industrial challenges. My goal is to integrate my deep engineering domain knowledge with machine learning and computer vision to optimize production efficiency and drive data-driven business decisions. 
