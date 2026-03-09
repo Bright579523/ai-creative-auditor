@@ -1,0 +1,12 @@
+streamlit==1.40.0
+plotly
+Pillow
+duckdb
+pandas
+numpy
+groq
+ultralytics
+opencv-python-headless
+easyocr
+scikit-learn
+webcolors

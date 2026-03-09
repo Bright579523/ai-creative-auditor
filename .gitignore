@@ -1,0 +1,18 @@
+# 1. Environment variables and API keys (Security)
+.env
+.venv
+env/
+venv/
+
+# 2. Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# 3. DuckDB local databases (Generate locally)
+*.duckdb
+*.duckdb.wal
+
+# 4. OS-generated files (Mac/Windows)
+.DS_Store
+Thumbs.db
