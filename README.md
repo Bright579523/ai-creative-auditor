@@ -2,9 +2,13 @@
 
 🔧 Tech Stack
 Frontend UI: Streamlit, Plotly
+
 Computer Vision: OpenCV, YOLOv8 (ultralytics), EasyOCR, scikit-learn
+
 Generative AI: Groq API (Llama 3.3 70B Versatile)
+
 Infrastructure: DuckDB, Docker, Hugging Face Spaces
+
 
 > **Stop guessing if your ad works. Let AI analyze the visuals and give you data-driven marketing feedback in seconds.**
 
@@ -62,9 +66,11 @@ pip install -r requirements.txt
 ```
 3. Set up your API Key
 You need a free API key from Groq. Do not hardcode it. Export it securely:
+
 Windows: set GROQ_API_KEY=your_api_key_here
+
 Mac/Linux: export GROQ_API_KEY=your_api_key_here
 
-4. Fire it up
+5. Fire it up
    ```
    streamlit run app.py
