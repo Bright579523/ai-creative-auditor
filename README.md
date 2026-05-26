@@ -1,3 +1,13 @@
+---
+title: Ai Creative Auditor
+emoji: 🚀
+colorFrom: yellow
+colorTo: yellow
+sdk: docker
+pinned: false
+license: mit
+---
+
 # AI Creative Auditor
 
 > Evaluate advertising creatives with **Computer Vision**, **structured LLM scoring**, and **DuckDB analytics** — built for data-driven marketing decisions.
