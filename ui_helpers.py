@@ -63,7 +63,7 @@ def render_score_breakdown(breakdown: dict) -> None:
             st.metric(label, breakdown.get(key, "—"))
 
 
-def render_color_chart(colors: list[dict]) -> None:
+def render_color_chart(colors: list[dict], key_prefix: str = "single") -> None:
     if not colors:
         return
     st.markdown("**Color palette analytics**")
@@ -75,7 +75,7 @@ def render_color_chart(colors: list[dict]) -> None:
         title="Dominant colors by pixel coverage",
     )
     fig.update_layout(showlegend=True, height=320, paper_bgcolor="rgba(0,0,0,0)")
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, key=f"{key_prefix}_color_bar")
     for c in colors:
         st.caption(f"{c['hex']} · {c['name']} · {c['coverage_pct']}% · {c['psychology']}")
 
@@ -99,17 +99,19 @@ def render_wcag_badge(wcag: dict) -> None:
         st.caption("WCAG: no text regions detected for contrast check.")
 
 
-def render_audit_result(res: dict, vision_data: dict) -> None:
+def render_audit_result(res: dict, vision_data: dict, key_prefix: str = "single") -> None:
     g1, g2 = st.columns(2)
     with g1:
         st.plotly_chart(
             create_gauge_chart(res["design_score"], "Design Score", "#0EA5E9"),
             use_container_width=True,
+            key=f"{key_prefix}_gauge_design",
         )
     with g2:
         st.plotly_chart(
             create_gauge_chart(res["business_score"], "Business Score", "#10B981"),
             use_container_width=True,
+            key=f"{key_prefix}_gauge_biz",
         )
 
     render_score_breakdown(res.get("score_breakdown", {}))
@@ -118,7 +120,7 @@ def render_audit_result(res: dict, vision_data: dict) -> None:
     if vision_data.get("color_insight"):
         st.info(vision_data["color_insight"])
 
-    render_color_chart(vision_data.get("color_analytics", []))
+    render_color_chart(vision_data.get("color_analytics", []), key_prefix=key_prefix)
 
     st.markdown(
         f"<div class='ai-rec-box'><strong>Recommendation:</strong><br><br>{res['actionable_feedback']}</div>",

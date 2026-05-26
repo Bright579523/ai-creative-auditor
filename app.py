@@ -202,7 +202,7 @@ with tab_analyze:
                     try:
                         res, vision_data = run_single_analysis(uploaded_file)
                         if res:
-                            render_audit_result(res, vision_data)
+                            render_audit_result(res, vision_data, key_prefix="tab1")
                         else:
                             st.error("LLM evaluation failed. Check GROQ_API_KEY.")
                     except Exception as e:
@@ -276,10 +276,10 @@ with tab_ab:
                         r1, r2 = st.columns(2)
                         with r1:
                             st.markdown("#### Creative A")
-                            render_audit_result(res_a, vis_a)
+                            render_audit_result(res_a, vis_a, key_prefix="ab_a")
                         with r2:
                             st.markdown("#### Creative B")
-                            render_audit_result(res_b, vis_b)
+                            render_audit_result(res_b, vis_b, key_prefix="ab_b")
                 except Exception as e:
                     st.error(f"Comparison error: {e}")
 
@@ -351,7 +351,7 @@ with tab_analytics:
                 psych_df = pd.Series(psych_tags).value_counts().reset_index()
                 psych_df.columns = ["psychology", "count"]
                 fig_p = px.pie(psych_df, names="psychology", values="count", title="Dominant color psychology mix")
-                st.plotly_chart(fig_p, use_container_width=True)
+                st.plotly_chart(fig_p, use_container_width=True, key="analytics_psych_pie")
 
 
 
