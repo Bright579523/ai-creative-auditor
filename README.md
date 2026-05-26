@@ -8,86 +8,92 @@ pinned: false
 license: mit
 ---
 
-# AI Creative Auditor
+# 🎯 AI Creative Auditor
 
-An intelligent ad creative evaluation system that combines local Computer Vision pipelines with structured Large Language Model (LLM) scoring and DuckDB analytics. Built to help marketing teams and data analysts make data-driven visual asset decisions.
+**AI Creative Auditor** is a practical tool built for marketing teams and business analysts. It takes the guesswork out of ad design reviews by combining **local Computer Vision (CV)** with **structured LLM evaluations** and **DuckDB analytical dashboards**. 
 
-**[Live Demo on Hugging Face Spaces](https://huggingface.co/spaces/Bright87/ai-creative-auditor)**  
-*Note: All original ad images are processed locally on the host machine to respect GDPR and user privacy guidelines.*
+Whether you want to audit a single banner, compare two creatives side-by-side (A/B testing), or track long-term performance trends across your visual assets, this tool provides concrete, objective design metrics.
 
----
-
-## The Journey: From V1 to V2
-
-This project began with a straightforward concept in **Version 1 (V1)**: helping marketers quickly screen ad creatives. In V1, the application allowed users to upload a single image to extract text, detect human presence, and get a basic, general design score with brief feedback spanning four broad categories.
-
-However, real-world testing revealed key limitations: the scoring lacked granular business context, color extraction didn't align with visual psychology, there was no built-in accessibility compliance checking, and users had no way to compare creatives side-by-side (A/B testing) or view a visual history of previously analyzed assets.
-
-To address these needs, we built **Version 2 (V2)**. While keeping the core concept of a **"Hybrid Local CV + Cloud LLM Auditor"**, we upgraded the architecture and introduced several professional features:
-
-1. **Structured & Granular Scoring**: Separated the evaluation into distinct Design and Business scores. It now provides a detailed breakdown across four dimensions: Visual Hierarchy, Color Psychology, Message Clarity, and Audience Fit, validated reliably using Pydantic schemas.
-2. **Color Psychology Analytics**: Instead of just listing basic color names like V1, V2 uses K-Means Clustering to extract precise HEX values, calculate visual coverage %, and map them to advertising psychology tags (e.g., trust, energy, warmth, calmness).
-3. **Accessibility Guardrails**: Integrated a WCAG contrast ratio heuristic. By sampling the text and surrounding background colors within OCR bounding boxes, it alerts designers if copy is hard to read.
-4. **Interactive A/B Creative Comparison**: Designed a dedicated comparison view allowing users to upload two creatives side-by-side, calculate delta scores, and automatically declare a winner based on unified performance.
-5. **Visual-First Analytics Dashboard**: Replaced the dry spreadsheets of V1 with a rich historical gallery powered by DuckDB. Marketing teams can now view all previously evaluated assets, filter by segments, inspect color psychology distributions, and export data as CSV.
-
-### Performance & Stability Upgrades
-* **Instant App Startup**: In V1, model weights for EasyOCR and YOLOv8 had to download on the fly, creating long deployment timeouts. In V2, we optimized the `Dockerfile` to pre-download all required models (both English and Thai packs) during the Docker build stage. The app now launches instantly.
-* **Anti-Flicker & Stable UI**: Added transition styles and layout min-height parameters in `assets/custom.css` to prevent layout jumps (screen jittering) when switching tabs or waiting for analysis.
-* **Streamlined Deployment with Git LFS**: Set up proper Git LFS tracking for the sample image dataset and DuckDB files. We also established an orphan-branch deployment pipeline to ensure clean pushes to Hugging Face Spaces.
+⚡ **[Launch the Live Demo on Hugging Face Spaces](https://huggingface.co/spaces/Bright87/ai-creative-auditor)**  
+🔒 *Privacy First: Your raw images never leave the host server. The pipeline processes computer vision tasks locally, sending only anonymous metadata to the LLM API.*
 
 ---
 
-## System Architecture
+## 🚀 The Upgrade: V1 vs. V2
 
-```
-[User Upload] ──> [Local CV Processing] ──> [Metadata & OCR Text] ──> [LLM Evaluation] ──> [Database & Dashboard]
-                         │                                                   │                         │
-                   - YOLOv8 (People Count)                             - Groq API                    - DuckDB
-                   - EasyOCR (Text Detection)                         (Llama 3.3 70B)                - Streamlit
-                   - K-Means (Colors & HEX)                           - Pydantic Validation          - Plotly Charts
-                   - WCAG Heuristic (Contrast)
-```
+### Where it started (V1)
+The project began as a simple prototype. Users uploaded a single image, and the system extracted text, counted people, and used an LLM to generate a single design score with a brief feedback block. 
 
-*Note: Raw images never leave the host server. Only extracted non-PII metadata, color names, and OCR text are sent to the LLM API, ensuring compliance with data privacy standards.*
+### Why we rebuilt it (V2)
+While the prototype worked, it didn't solve real-world problems. Marketers needed to compare assets, designers needed actionable layout feedback, and analysts needed data they could export and query. We updated the architecture to make it a professional-grade portfolio app:
+
+* **Dual-Track Scoring System**: Instead of one generic score, V2 evaluates creatives across two key tracks: **Design Score** and **Business Score**. These are broken down into four distinct categories: Visual Hierarchy, Color Psychology, Message Clarity, and Target Audience Fit.
+* **Color Psychology & Extraction**: Moving beyond basic color names, the pipeline uses K-Means Clustering to identify dominant HEX values and their exact canvas coverage %. It then maps these colors to visual psychology tags (e.g., trust, excitement, warmth).
+* **Built-in WCAG Contrast Checks**: A helper utility samples the text and background pixels inside OCR boundaries, calculating relative luminance contrast ratios. If your text is hard to read, the system flags it.
+* **Side-by-Side A/B Comparisons**: Upload two creatives simultaneously to compare scores, analyze performance delta metrics, and automatically determine a clear winner.
+* **Visual Asset Catalog**: The Mock Analytics dashboard features an image gallery pulled directly from DuckDB, allowing teams to filter, search, and visually audit their entire creative library alongside their metrics.
+
+### Under the Hood (Performance & UI)
+* **Instant Startups**: YOLOv8 and EasyOCR models are pre-cached inside the Docker image during the build stage. You no longer have to wait minutes for model weights to download on first run.
+* **No Layout Jumps**: Added structural CSS min-height rules and clean fade-in animations to eliminate annoying screen flickering when switching tabs.
+* **Stable DB Storage**: Re-architected DuckDB data pipelines to support Git LFS, with custom scripts for deploying binary-heavy histories to Hugging Face Spaces cleanly.
 
 ---
 
-## Repository Structure
+## 🛠️ How It Works
 
 ```
-├── app.py                 # Streamlit UI application (Audit, A/B Comparison, Analytics)
-├── ui_helpers.py          # Visual chart renderers, score gauges, and UI helpers
-├── vision_ops.py          # Local computer vision pipeline (YOLO, OCR, K-Means, WCAG)
-├── run_pipeline.py        # Groq LLM client runner and offline batch processing pipeline
-├── schemas.py             # Pydantic models enforcing structured JSON outputs
-├── database_ops.py        # Database connectors for writing and reading with DuckDB
-├── init_db.py             # Script to initialize or upgrade the database schema
-├── migrate_db_v2.py       # Helper script to migrate existing databases to V2
-├── assets/custom.css      # Styling rules containing the layout anti-flicker fixes
-├── docs/CASE_STUDY.md     # Business case study, GDPR details, and project limitations
-├── tests/                 # Unit tests (pytest suite)
-├── notebooks/             # Jupyter notebooks for EDA and model evaluation
-├── requirements.txt       # Python dependencies
-└── Dockerfile             # Multi-stage Docker configuration optimized for fast startup
+[Upload Ad Image] 
+       │
+       ▼
+┌──────────────────────────────────────────────┐
+│  Local Computer Vision (Local Host)          │
+├──────────────────────────────────────────────┤
+│  • YOLOv8       ──> Count target subjects     │
+│  • EasyOCR      ──> Extract raw ad text       │
+│  • K-Means      ──> Extract colors & coverage │
+│  • Luminance    ──> Calculate WCAG contrast   │
+└──────────────────────┬───────────────────────┘
+                       │ (JSON Metadata Only)
+                       ▼
+┌──────────────────────────────────────────────┐
+│  Structured Assessment (Groq/Llama 3.3)      │
+├──────────────────────────────────────────────┤
+│  • Correct OCR transcription mistakes        │
+│  • Score visual design & business clarity     │
+│  • Generate concrete, structured feedback    │
+└──────────────────────┬───────────────────────┘
+                       │ (Pydantic validated)
+                       ▼
+┌──────────────────────────────────────────────┐
+│  DuckDB Storage & Streamlit Dashboard        │
+└──────────────────────────────────────────────┘
 ```
 
 ---
 
-## Core Tech Stack
+## 📂 Project Structure
 
-* **Frontend & Charts:** Streamlit 1.40, Plotly, custom CSS
-* **Computer Vision:** OpenCV, YOLOv8n, EasyOCR, scikit-learn K-Means
-* **LLM Engine:** Groq API (Llama 3.3 70B Versatile), Pydantic v2
-* **Storage & Analytics:** DuckDB, pandas
-* **Quality Assurance:** pytest, ruff, GitHub Actions
-* **Deployment:** Docker, Hugging Face Spaces (via Git LFS + orphan branch workflow)
+```
+├── app.py                 # Main Streamlit dashboard (Audit, A/B Testing, Analytics tabs)
+├── ui_helpers.py          # Plotly charts, score gauges, and rendering layouts
+├── vision_ops.py          # Image processing core (YOLO, EasyOCR, K-Means clustering, WCAG contrast)
+├── run_pipeline.py        # Groq client integration and offline batch pipeline
+├── schemas.py             # Pydantic models for structured output validation
+├── database_ops.py        # DuckDB connector and query functions
+├── init_db.py             # Database creation and table initialization
+├── migrate_db_v2.py       # DB schema migration utility
+├── assets/custom.css      # Styling rules and page transition fixes
+├── docs/CASE_STUDY.md     # In-depth business study, GDPR compliance notes, and limitations
+├── tests/                 # Unit test suite (pytest)
+└── Dockerfile             # Multi-stage build configuration
+```
 
 ---
 
-## Setup & Installation
+## 💻 Running Locally
 
-### 1. Clone & Install Dependencies
+### 1. Clone the Project & Install Requirements
 ```bash
 git clone https://github.com/Bright579523/ai-creative-auditor.git
 cd ai-creative-auditor
@@ -95,40 +101,39 @@ cd ai-creative-auditor
 pip install -r requirements.txt
 ```
 
-### 2. Configure Environment Variables
-Copy the template `.env.example` file to `.env` and fill in your Groq API key:
+### 2. Set Up Your Environment
+Copy the example environment file and add your Groq API key:
 ```bash
 copy .env.example .env
-# Open .env and add your key: GROQ_API_KEY=gsk_xxxxxxx
+# Edit .env and enter: GROQ_API_KEY=gsk_your_key_here
 ```
 
-### 3. Initialize Database & Run Batch Pre-processing
-Initialize the DuckDB file and run the pipeline to analyze the sample images in `ads_dataset/`:
+### 3. Initialize & Populate the Database
+Create your local DuckDB database and run the batch processor to analyze the demo images:
 ```bash
 python init_db.py
 python run_pipeline.py
 ```
 
-### 4. Run the Streamlit Dashboard
-Launch the web interface locally:
+### 4. Launch the Dashboard
 ```bash
 streamlit run app.py
 ```
-The application will automatically open in your default browser at `http://localhost:8501`.
+Open `http://localhost:8501` in your browser.
 
 ---
 
-## Testing & Quality Control
+## 🧪 Testing
 
-To run the local unit tests and lint checks:
+To run the unit test suite and check code formatting:
 ```bash
 pip install pytest ruff
-ruff check .           # Check code style and formatting
-pytest tests/ -v       # Run the pytest suite
+ruff check .
+pytest tests/ -v
 ```
 
 ---
 
-## License
+## 📄 License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
