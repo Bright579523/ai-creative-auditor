@@ -1,6 +1,43 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 
-.stApp { background-color: #F4F7F9; }
+/* ── Anti-flicker & smooth transitions ── */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.stApp {
+    background-color: #F4F7F9;
+    animation: fadeIn 0.25s ease-in-out;
+}
+
+/* Prevent layout shift during tab switch */
+[data-testid="stTabs"] {
+    min-height: 600px;
+}
+
+/* Smooth all content transitions */
+[data-testid="stTabContent"],
+[data-testid="stVerticalBlock"],
+[data-testid="stHorizontalBlock"] {
+    transition: opacity 0.15s ease-in-out;
+}
+
+/* Prevent image pop-in layout shift */
+[data-testid="stImage"] {
+    min-height: 100px;
+}
+
+/* Stabilize file uploader height */
+div[data-testid="stFileUploader"] {
+    min-height: 120px;
+}
+
+/* Stabilize column cards */
+[data-testid="stHorizontalBlock"] > [data-testid="column"] {
+    min-height: 200px;
+}
+
 html, body, [class*="css"], p, h1, h2, h3, h4, h5, h6, span, div { color: #0F172A !important; }
 
 [data-testid="stHorizontalBlock"] > [data-testid="column"] {
@@ -30,3 +67,4 @@ div[data-testid="stFileUploader"] section { border: 2px dashed #117A65 !importan
 .badge-wcag-fail { background-color: #FEE2E2; color: #B91C1C; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.85rem;}
 
 #MainMenu {visibility: hidden;} footer {visibility: hidden;}
+
