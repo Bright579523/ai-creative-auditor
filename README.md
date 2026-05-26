@@ -14,6 +14,9 @@ license: mit
 
 Whether you want to audit a single banner, compare two creatives side-by-side (A/B testing), or track long-term performance trends across your visual assets, this tool provides concrete, objective design metrics.
 
+<img width="1880" height="788" alt="image" src="https://github.com/user-attachments/assets/f38578a6-2544-416e-9965-50d5efcd436c" />
+
+
 ⚡ **[Launch the Live Demo on Hugging Face Spaces](https://huggingface.co/spaces/Bright87/ai-creative-auditor)**  
 🔒 *Privacy First: Your raw images never leave the host server. The pipeline processes computer vision tasks locally, sending only anonymous metadata to the LLM API.*
 
@@ -24,6 +27,9 @@ Whether you want to audit a single banner, compare two creatives side-by-side (A
 ### Where it started (V1)
 The project began as a simple prototype. Users uploaded a single image, and the system extracted text, counted people, and used an LLM to generate a single design score with a brief feedback block. 
 
+<img width="1542" height="862" alt="image" src="https://github.com/user-attachments/assets/aab5a7e2-a2c0-4059-b929-9a31a3624b48" />
+
+
 ### Why we rebuilt it (V2)
 While the prototype worked, it didn't solve real-world problems. Marketers needed to compare assets, designers needed actionable layout feedback, and analysts needed data they could export and query. We updated the architecture to make it a professional-grade portfolio app:
 
@@ -32,6 +38,9 @@ While the prototype worked, it didn't solve real-world problems. Marketers neede
 * **Built-in WCAG Contrast Checks**: A helper utility samples the text and background pixels inside OCR boundaries, calculating relative luminance contrast ratios. If your text is hard to read, the system flags it.
 * **Side-by-Side A/B Comparisons**: Upload two creatives simultaneously to compare scores, analyze performance delta metrics, and automatically determine a clear winner.
 * **Visual Asset Catalog**: The Mock Analytics dashboard features an image gallery pulled directly from DuckDB, allowing teams to filter, search, and visually audit their entire creative library alongside their metrics.
+
+<img width="1554" height="844" alt="image" src="https://github.com/user-attachments/assets/2ba49f23-89a0-4082-89a1-804308cdd35d" />
+
 
 ### Under the Hood (Performance & UI)
 * **Instant Startups**: YOLOv8 and EasyOCR models are pre-cached inside the Docker image during the build stage. You no longer have to wait minutes for model weights to download on first run.
