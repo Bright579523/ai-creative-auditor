@@ -1,0 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
+
+.stApp { background-color: #F4F7F9; }
+html, body, [class*="css"], p, h1, h2, h3, h4, h5, h6, span, div { color: #0F172A !important; }
+
+[data-testid="stHorizontalBlock"] > [data-testid="column"] {
+    background-color: #FFFFFF; border-radius: 20px; padding: 2rem;
+    box-shadow: 0 10px 40px rgba(15, 23, 42, 0.03); border: 1px solid #E2E8F0;
+}
+
+.main-header { text-align: center; margin-bottom: 2rem; margin-top: 1rem; }
+.main-header h1 { font-family: 'Poppins', sans-serif; font-weight: 900; font-size: 2.8rem; letter-spacing: -1.5px; color: #0F172A !important; margin-bottom: 0.5rem !important;}
+.main-header p { font-family: 'Inter', sans-serif; font-weight: 500; color: #475569 !important; font-size: 1.1rem; max-width: 700px; margin: 0 auto; line-height: 1.6;}
+
+.upload-subtitle { text-align: center; font-family: 'Inter', sans-serif; font-size: 1.1rem; font-weight: 700; color: #117A65 !important; margin-bottom: 1rem; }
+
+div[data-testid="stFileUploader"] { background-color: #FFFFFF !important; padding: 1.5rem !important; border-radius: 12px !important; }
+div[data-testid="stFileUploader"] section { border: 2px dashed #117A65 !important; background-color: #F8FAFC !important; padding: 2rem !important; border-radius: 12px !important; }
+
+.card-title { font-family: 'Poppins', sans-serif; font-size: 1.3rem; font-weight: 800; color: #1E3A8A !important; margin-bottom: 1.2rem; border-bottom: 2px solid #F1F5F9; padding-bottom: 0.8rem; }
+
+.ai-rec-box { background-color: #F8FAFC; border-left: 5px solid #0EA5E9; padding: 20px; border-radius: 10px; color: #020617 !important; font-family: 'Inter', sans-serif; font-size: 1rem; line-height: 1.6; font-weight: 500; margin-top: 0.5rem; }
+
+.kpi-title { font-family: 'Inter', sans-serif; font-size: 0.95rem; font-weight: 700; color: #1E293B !important; text-transform: uppercase; letter-spacing: 1px;}
+.kpi-val { font-family: 'Poppins', sans-serif; font-size: 2.8rem; font-weight: 900; color: #0F172A !important; }
+
+.badge-design { background-color: #E0F2FE; color: #0284C7; padding: 4px 10px; border-radius: 6px; font-weight: 800; font-size: 0.85rem;}
+.badge-biz { background-color: #DCFCE3; color: #166534; padding: 4px 10px; border-radius: 6px; font-weight: 800; font-size: 0.85rem;}
+.badge-wcag-pass { background-color: #DCFCE3; color: #166534; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.85rem;}
+.badge-wcag-fail { background-color: #FEE2E2; color: #B91C1C; padding: 4px 10px; border-radius: 6px; font-weight: 700; font-size: 0.85rem;}
+
+#MainMenu {visibility: hidden;} footer {visibility: hidden;}

@@ -5,8 +5,11 @@ duckdb
 pandas
 numpy
 groq
+python-dotenv
+pydantic>=2.0
 ultralytics
 opencv-python-headless
 easyocr
 scikit-learn
-webcolors
+pytest
+ruff
