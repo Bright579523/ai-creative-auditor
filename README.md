@@ -42,32 +42,33 @@ While the prototype worked, it didn't solve real-world problems. Marketers neede
 
 ## 🛠️ How It Works
 
-```
-[Upload Ad Image] 
-       │
-       ▼
-┌──────────────────────────────────────────────┐
-│  Local Computer Vision (Local Host)          │
-├──────────────────────────────────────────────┤
-│  • YOLOv8       ──> Count target subjects     │
-│  • EasyOCR      ──> Extract raw ad text       │
-│  • K-Means      ──> Extract colors & coverage │
-│  • Luminance    ──> Calculate WCAG contrast   │
-└──────────────────────┬───────────────────────┘
-                       │ (JSON Metadata Only)
-                       ▼
-┌──────────────────────────────────────────────┐
-│  Structured Assessment (Groq/Llama 3.3)      │
-├──────────────────────────────────────────────┤
-│  • Correct OCR transcription mistakes        │
-│  • Score visual design & business clarity     │
-│  • Generate concrete, structured feedback    │
-└──────────────────────┬───────────────────────┘
-                       │ (Pydantic validated)
-                       ▼
-┌──────────────────────────────────────────────┐
-│  DuckDB Storage & Streamlit Dashboard        │
-└──────────────────────────────────────────────┘
+```mermaid
+graph TD
+    A([Upload Ad Image]) -->|Raw Image| B
+
+    subgraph B [Local Computer Vision Pipeline]
+        direction TB
+        B1(YOLOv8: Count target subjects)
+        B2(EasyOCR: Extract raw ad text)
+        B3(K-Means: Extract colors & coverage)
+        B4(Luminance: Calculate WCAG contrast)
+    end
+
+    B -->|JSON Metadata Only| C
+
+    subgraph C [Structured Assessment via Groq / Llama 3.3]
+        direction TB
+        C1(Correct OCR transcription mistakes)
+        C2(Score visual design & business clarity)
+        C3(Generate concrete, structured feedback)
+    end
+
+    C -->|Pydantic Validated JSON| D([DuckDB Storage & Streamlit Dashboard])
+    
+    style A fill:#4CAF50,stroke:#388E3C,stroke-width:2px,color:#fff
+    style D fill:#2196F3,stroke:#1976D2,stroke-width:2px,color:#fff
+    style B fill:#fff3e0,stroke:#ff9800,stroke-width:2px,color:#333
+    style C fill:#f3e5f5,stroke:#9c27b0,stroke-width:2px,color:#333
 ```
 
 ---
