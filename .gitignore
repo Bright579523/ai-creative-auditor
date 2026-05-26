@@ -14,6 +14,7 @@ __pycache__/
 # 3. DuckDB local databases (Generate locally)
 *.duckdb
 *.duckdb.wal
+!ad_database.duckdb
 
 # 4. OS-generated files (Mac/Windows)
 .DS_Store

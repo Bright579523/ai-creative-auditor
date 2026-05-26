@@ -25,5 +25,9 @@ WORKDIR $HOME/app
 # Copy application files
 COPY --chown=user . $HOME/app
 
+# Pre-download EasyOCR models (en, th) and pre-load YOLOv8 so they are cached in the image
+RUN python -c "import easyocr; easyocr.Reader(['en', 'th'])"
+RUN python -c "from ultralytics import YOLO; YOLO('yolov8n.pt')"
+
 # Run Streamlit (all config in .streamlit/config.toml)
 CMD ["streamlit", "run", "app.py"]
