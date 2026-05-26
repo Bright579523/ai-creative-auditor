@@ -10,84 +10,84 @@ license: mit
 
 # AI Creative Auditor
 
-ระบบประเมินประสิทธิภาพภาพโฆษณา (Ad Creative) อัจฉริยะ ที่นำเทคโนโลยี Computer Vision มาทำงานร่วมกับภาษาขนาดใหญ่ (LLM) และระบบจัดเก็บข้อมูล DuckDB เพื่อช่วยให้นักการตลาดและนักวิเคราะห์ข้อมูลตัดสินใจเลือกชิ้นงานโฆษณาได้อย่างมีประสิทธิภาพและแม่นยำ
+An intelligent ad creative evaluation system that combines local Computer Vision pipelines with structured Large Language Model (LLM) scoring and DuckDB analytics. Built to help marketing teams and data analysts make data-driven visual asset decisions.
 
-**[ทดลองใช้งานจริงบน Hugging Face Spaces](https://huggingface.co/spaces/Bright87/ai-creative-auditor)**  
-*หมายเหตุ: ข้อมูลภาพโฆษณาทั้งหมดจะถูกประมวลผลบนเครื่อง (Local CV) เพื่อความปลอดภัยและความเป็นส่วนตัวตามมาตรฐาน GDPR*
-
----
-
-## จุดเริ่มต้นจาก V1 สู่ความสามารถใหม่ใน V2
-
-โปรเจกต์นี้เริ่มต้นขึ้นจากแนวคิดง่ายๆ ใน **เวอร์ชัน 1 (V1)** ที่ต้องการช่วยนักการตลาดคัดกรองรูปภาพโฆษณา โดยใน V1 ระบบสามารถอัปโหลดภาพโฆษณาขึ้นมาวิเคราะห์ได้ทีละหนึ่งภาพ เพื่อดึงข้อความ ตรวจจับจำนวนคน และประเมินคะแนนการออกแบบคร่าวๆ จากโมเดลภาษาโดยให้คำแนะนำสั้นๆ 4 ด้านหลัก 
-
-แต่เมื่อนำไปทดลองใช้งานจริง เราพบว่าการประเมินลักษณะนั้นยังมีข้อจำกัดอยู่หลายประการ เช่น คะแนนประเมินไม่ได้แยกแยะมิติเชิงธุรกิจ การประมวลผลสีไม่ได้วิเคราะห์ลึกถึงความรู้สึก และระบบยังขาดเครื่องมือเปรียบเทียบชิ้นงานสำหรับการทำ A/B Testing รวมถึงหน้าจอวิเคราะห์ประวัติข้อมูลก็ยังเป็นแบบตารางดิบที่ดูยาก
-
-เราจึงพัฒนา **เวอร์ชัน 2 (V2)** ขึ้นมา โดยยังคงคอนเซ็ปต์หลักในการเป็น **"ผู้ช่วยประเมินโฆษณาอัจฉริยะแบบ Hybrid"** เอาไว้ แต่ยกระดับสถาปัตยกรรมและเพิ่มฟีเจอร์ต่างๆ ให้ใช้งานได้จริงในระดับมืออาชีพ:
-
-1. **ระบบคะแนนละเอียดและแม่นยำยิ่งขึ้น**: ปรับโครงสร้างการตรวจวัดจาก LLM ให้แยกคะแนนด้านการออกแบบ (Design Score) และคะแนนเชิงธุรกิจ (Business Score) ออกจากกัน พร้อมแสดงผลกราฟสเกลย่อย 4 ด้าน (Visual Hierarchy, Color Psychology, Message Clarity และ Audience Fit) ผ่านการตรวจสอบโครงสร้างผลลัพธ์ด้วย Pydantic
-2. **การวิเคราะห์สีเชิงจิตวิทยาโฆษณา**: แทนที่จะบอกแค่ชื่อสีธรรมดาๆ แบบใน V1 ระบบใหม่ใช้ K-Means Clustering สกัดรหัสสี HEX และคำนวณสัดส่วนพื้นที่ของแต่ละสี (%) จากนั้นจับคู่กับหลักจิตวิทยาว่าสีเหล่านั้นกระตุ้นความรู้สึกผู้บริโภคอย่างไร (เช่น ความน่าเชื่อถือ, ความตื่นเต้น, ความสงบ)
-3. **การประเมินการเข้าถึง (Accessibility Signal)**: นำมาตรฐาน WCAG Contrast Heuristic มาตรวจวัดระดับความต่างของสีระหว่างข้อความโฆษณาและพื้นหลังโดยรอบของกรอบตัวอักษรนั้นๆ ช่วยเตือนดีไซเนอร์ล่วงหน้าหากโฆษณาอ่านยากเกินไป
-4. **เครื่องมือเปรียบเทียบ A/B Testing**: เพิ่มฟีเจอร์เปรียบเทียบโฆษณาแบบ Side-by-side สองชิ้นงาน เพื่อเปรียบเทียบคะแนนและคำแนะนำเชิงลึกแบบจุดต่อจุด ช่วยให้เลือกภาพโฆษณาที่ดีที่สุดก่อนเริ่มแคมเปญ
-5. **ระบบวิเคราะห์ประวัติโฆษณาแบบ Visual-First**: ปรับหน้าแดชบอร์ดสถิติใน DuckDB ใหม่ทั้งหมด มีคลังภาพโฆษณาที่เคยวิเคราะห์โชว์คู่กับคะแนนประเมินและสัดส่วนสีเชิงจิตวิทยา ช่วยให้เห็นภาพรวมของคลังสื่อทั้งหมดได้ทันที
-
-### การปรับปรุงประสิทธิภาพ (Performance & Stability Improvements)
-* **รวดเร็ว ไม่ต้องรอดาวน์โหลดบ่อยๆ**: เราปรับโครงสร้างระบบให้ติดตั้งตัวแปรน้ำหนัก (Weights) ของ EasyOCR และ YOLOv8 ไว้ใน Docker Image ตั้งแต่ตอนสร้าง ทำให้เวลาเปิดโปรเจกต์ใช้งาน ตัวเว็บพร้อมทำงานทันที ไม่ต้องดาวน์โหลดไฟล์โมเดลขนาดใหญ่ซ้ำอีก ลดเวลาโหลดจากหลายนาทีเหลือเพียงไม่กี่วินาที
-* **ระบบ UI ลื่นไหล ไม่มีรอยต่อ**: ป้องกันการเกิดอาการหน้าจอสั่น วูบวาบ หรือเลย์เอาต์ย่อขยายกระทันหัน (Screen Jittering) ขณะรอประมวลผลหรือสลับหน้าต่าง ด้วยการกำหนดกรอบความสูงขั้นต่ำและการเปลี่ยนผ่านแบบ Fade-in ด้วย Custom CSS
-* **ระบบจัดการไฟล์ใหญ่ไร้ปัญหา**: ปรับปรุงโครงสร้างโปรเจกต์ให้ส่งขึ้นคลาวด์ได้อย่างปลอดภัยด้วยการใช้ Git LFS จัดการกับไฟล์ภาพตัวอย่างและไฟล์ฐานข้อมูล DuckDB พร้อมสคริปต์การทำ Orphan Branch เพื่อให้ Push ขึ้นหน้า Hugging Face ได้อย่างเสถียร
+**[Live Demo on Hugging Face Spaces](https://huggingface.co/spaces/Bright87/ai-creative-auditor)**  
+*Note: All original ad images are processed locally on the host machine to respect GDPR and user privacy guidelines.*
 
 ---
 
-## สถาปัตยกรรมการทำงานของระบบ
+## The Journey: From V1 to V2
+
+This project began with a straightforward concept in **Version 1 (V1)**: helping marketers quickly screen ad creatives. In V1, the application allowed users to upload a single image to extract text, detect human presence, and get a basic, general design score with brief feedback spanning four broad categories.
+
+However, real-world testing revealed key limitations: the scoring lacked granular business context, color extraction didn't align with visual psychology, there was no built-in accessibility compliance checking, and users had no way to compare creatives side-by-side (A/B testing) or view a visual history of previously analyzed assets.
+
+To address these needs, we built **Version 2 (V2)**. While keeping the core concept of a **"Hybrid Local CV + Cloud LLM Auditor"**, we upgraded the architecture and introduced several professional features:
+
+1. **Structured & Granular Scoring**: Separated the evaluation into distinct Design and Business scores. It now provides a detailed breakdown across four dimensions: Visual Hierarchy, Color Psychology, Message Clarity, and Audience Fit, validated reliably using Pydantic schemas.
+2. **Color Psychology Analytics**: Instead of just listing basic color names like V1, V2 uses K-Means Clustering to extract precise HEX values, calculate visual coverage %, and map them to advertising psychology tags (e.g., trust, energy, warmth, calmness).
+3. **Accessibility Guardrails**: Integrated a WCAG contrast ratio heuristic. By sampling the text and surrounding background colors within OCR bounding boxes, it alerts designers if copy is hard to read.
+4. **Interactive A/B Creative Comparison**: Designed a dedicated comparison view allowing users to upload two creatives side-by-side, calculate delta scores, and automatically declare a winner based on unified performance.
+5. **Visual-First Analytics Dashboard**: Replaced the dry spreadsheets of V1 with a rich historical gallery powered by DuckDB. Marketing teams can now view all previously evaluated assets, filter by segments, inspect color psychology distributions, and export data as CSV.
+
+### Performance & Stability Upgrades
+* **Instant App Startup**: In V1, model weights for EasyOCR and YOLOv8 had to download on the fly, creating long deployment timeouts. In V2, we optimized the `Dockerfile` to pre-download all required models (both English and Thai packs) during the Docker build stage. The app now launches instantly.
+* **Anti-Flicker & Stable UI**: Added transition styles and layout min-height parameters in `assets/custom.css` to prevent layout jumps (screen jittering) when switching tabs or waiting for analysis.
+* **Streamlined Deployment with Git LFS**: Set up proper Git LFS tracking for the sample image dataset and DuckDB files. We also established an orphan-branch deployment pipeline to ensure clean pushes to Hugging Face Spaces.
+
+---
+
+## System Architecture
 
 ```
-[ผู้ใช้ส่งรูปโฆษณา] ──> [ประมวลผล Local CV ในเครื่อง] ──> [ส่งข้อมูล Meta ไปวิเคราะห์ที่ LLM] ──> [บันทึกข้อมูลและแสดงผล]
-                              │                                      │                                 │
-                        - YOLOv8 (นับคน)                         - Groq API                          - DuckDB
-                        - EasyOCR (สกัดข้อความ)                 (Llama 3.3 70B)                     - Streamlit
-                        - K-Means (วิเคราะห์สี)                  - ตรวจสอบด้วย Pydantic              - Plotly Charts
-                        - WCAG Heuristic (ค่าคอนทราสต์)
+[User Upload] ──> [Local CV Processing] ──> [Metadata & OCR Text] ──> [LLM Evaluation] ──> [Database & Dashboard]
+                         │                                                   │                         │
+                   - YOLOv8 (People Count)                             - Groq API                    - DuckDB
+                   - EasyOCR (Text Detection)                         (Llama 3.3 70B)                - Streamlit
+                   - K-Means (Colors & HEX)                           - Pydantic Validation          - Plotly Charts
+                   - WCAG Heuristic (Contrast)
 ```
 
-*หมายเหตุ: รูปภาพโฆษณาต้นฉบับจะถูกประมวลผลเฉพาะภายในระบบภายในเครื่องเท่านั้น จะไม่มีการส่งภาพจริงไปยัง API ภายนอก ส่งข้อมูลไปวิเคราะห์เพียงแค่ข้อมูลตัวอักษรและข้อมูลเมตาที่สกัดได้เท่านั้น ปลอดภัยต่อข้อมูลธุรกิจ*
+*Note: Raw images never leave the host server. Only extracted non-PII metadata, color names, and OCR text are sent to the LLM API, ensuring compliance with data privacy standards.*
 
 ---
 
-## โครงสร้างโปรเจกต์
+## Repository Structure
 
 ```
-├── app.py                 # ตัวโปรแกรมหลัก Streamlit UI (ประเมิน, เปรียบเทียบ A/B, แดชบอร์ด)
-├── ui_helpers.py          # ตัวช่วยวาดกราฟ เกจวัดคะแนน และคาร์ดหน้าเว็บ
-├── vision_ops.py          # ท่อประมวลผลหลักด้านคอมพิวเตอร์วิทัศน์ (Local CV)
-├── run_pipeline.py        # ระบบส่งข้อมูลให้ LLM ประเมิน และระบบรันชุดข้อมูลแบบกลุ่ม (Batch)
-├── schemas.py             # โครงสร้างตรวจสอบข้อมูล Pydantic
-├── database_ops.py        # ตัวจัดการบันทึกและอ่านข้อมูลกับ DuckDB
-├── init_db.py             # สคริปต์สร้างฐานข้อมูลและตารางเริ่มต้น
-├── migrate_db_v2.py       # สคริปต์ช่วยอัปเดตตารางฐานข้อมูล v2
-├── assets/custom.css      # ไฟล์ปรับแต่งการแสดงผลและป้องกันหน้าจอสั่น
-├── docs/CASE_STUDY.md     # บทวิเคราะห์กรณีศึกษาทางธุรกิจและประเด็น GDPR
-├── tests/                 # ชุดคำสั่งสำหรับทดสอบระบบ (pytest)
-├── notebooks/             # สมุดบันทึก EDA และสมุดประเมินตัวแบบวิเคราะห์
-├── requirements.txt       # รายการไลบรารีที่จำเป็น
-└── Dockerfile             # ไฟล์ตั้งค่า Docker Image สำหรับฝั่งคลาวด์
+├── app.py                 # Streamlit UI application (Audit, A/B Comparison, Analytics)
+├── ui_helpers.py          # Visual chart renderers, score gauges, and UI helpers
+├── vision_ops.py          # Local computer vision pipeline (YOLO, OCR, K-Means, WCAG)
+├── run_pipeline.py        # Groq LLM client runner and offline batch processing pipeline
+├── schemas.py             # Pydantic models enforcing structured JSON outputs
+├── database_ops.py        # Database connectors for writing and reading with DuckDB
+├── init_db.py             # Script to initialize or upgrade the database schema
+├── migrate_db_v2.py       # Helper script to migrate existing databases to V2
+├── assets/custom.css      # Styling rules containing the layout anti-flicker fixes
+├── docs/CASE_STUDY.md     # Business case study, GDPR details, and project limitations
+├── tests/                 # Unit tests (pytest suite)
+├── notebooks/             # Jupyter notebooks for EDA and model evaluation
+├── requirements.txt       # Python dependencies
+└── Dockerfile             # Multi-stage Docker configuration optimized for fast startup
 ```
 
 ---
 
-## เทคโนโลยีหลักที่ใช้
+## Core Tech Stack
 
-* **ส่วนติดต่อผู้ใช้ (UI):** Streamlit 1.40, Plotly, Custom HTML/CSS
-* **ระบบตรวจจับภาพ (Vision):** OpenCV, YOLOv8n, EasyOCR (ภาษาไทยและอังกฤษ), scikit-learn K-Means
-* **ระบบสมองกลวิเคราะห์ (AI):** Groq API (Llama 3.3 70B Versatile), Pydantic v2
-* **ระบบจัดการข้อมูล (Data & Database):** DuckDB, pandas
-* **ระบบทดสอบและตรวจสอบคุณภาพ:** pytest, ruff, GitHub Actions
-* **การติดตั้งระบบใช้งาน (Deployment):** Docker, Hugging Face Spaces
+* **Frontend & Charts:** Streamlit 1.40, Plotly, custom CSS
+* **Computer Vision:** OpenCV, YOLOv8n, EasyOCR, scikit-learn K-Means
+* **LLM Engine:** Groq API (Llama 3.3 70B Versatile), Pydantic v2
+* **Storage & Analytics:** DuckDB, pandas
+* **Quality Assurance:** pytest, ruff, GitHub Actions
+* **Deployment:** Docker, Hugging Face Spaces (via Git LFS + orphan branch workflow)
 
 ---
 
-## วิธีติดตั้งและรันใช้งานในเครื่องคอมพิวเตอร์ของคุณ
+## Setup & Installation
 
-### 1. ดาวน์โหลดโปรเจกต์และเตรียมสภาพแวดล้อม
+### 1. Clone & Install Dependencies
 ```bash
 git clone https://github.com/Bright579523/ai-creative-auditor.git
 cd ai-creative-auditor
@@ -95,39 +95,40 @@ cd ai-creative-auditor
 pip install -r requirements.txt
 ```
 
-### 2. ตั้งค่าคีย์ใช้งาน (API Key)
-คัดลอกไฟล์ต้นแบบ `.env.example` ไปเป็น `.env` จากนั้นใส่รหัส API Key ของ Groq:
+### 2. Configure Environment Variables
+Copy the template `.env.example` file to `.env` and fill in your Groq API key:
 ```bash
 copy .env.example .env
-# เปิดไฟล์ .env แล้วใส่คีย์ลงไป: GROQ_API_KEY=gsk_xxxxxxx
+# Open .env and add your key: GROQ_API_KEY=gsk_xxxxxxx
 ```
 
-### 3. เริ่มต้นระบบฐานข้อมูลและประมวลผลข้อมูลตัวอย่าง
+### 3. Initialize Database & Run Batch Pre-processing
+Initialize the DuckDB file and run the pipeline to analyze the sample images in `ads_dataset/`:
 ```bash
-python init_db.py        # สร้างฐานข้อมูล DuckDB และโครงสร้างตาราง
-python run_pipeline.py   # รันระบบวิเคราะห์ชุดภาพตัวอย่างทั้งหมดใน ads_dataset/ ลงระบบฐานข้อมูล
+python init_db.py
+python run_pipeline.py
 ```
 
-### 4. เปิดโปรแกรมใช้งาน
+### 4. Run the Streamlit Dashboard
+Launch the web interface locally:
 ```bash
 streamlit run app.py
 ```
-
-หลังจากพิมพ์คำสั่งด้านบน หน้าเว็บแอปพลิเคชันจะเปิดขึ้นโดยอัตโนมัติที่เบราว์เซอร์ของคุณที่ที่อยู่ `http://localhost:8501`
+The application will automatically open in your default browser at `http://localhost:8501`.
 
 ---
 
-## การทดสอบระบบ (Testing)
+## Testing & Quality Control
 
-หากคุณต้องการรันชุดทดสอบเพื่อตรวจสอบการทำงานของโค้ด:
+To run the local unit tests and lint checks:
 ```bash
 pip install pytest ruff
-ruff check .           # ตรวจสอบไวยากรณ์และความสะอาดของโค้ด
-pytest tests/ -v       # รันการทดสอบฟังก์ชันต่างๆ ของระบบ
+ruff check .           # Check code style and formatting
+pytest tests/ -v       # Run the pytest suite
 ```
 
 ---
 
-## สัญญาอนุญาตการใช้งาน (License)
+## License
 
-โปรเจกต์นี้เผยแพร่ภายใต้สัญญาอนุญาตใช้งานแบบ **MIT License** สามารถดูรายละเอียดเพิ่มเติมได้ที่ไฟล์ [LICENSE](LICENSE)
+This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
