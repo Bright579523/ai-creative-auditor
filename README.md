@@ -1,4 +1,4 @@
-```yaml
+---
 title: Ai Creative Auditor
 emoji: 🚀
 colorFrom: yellow
@@ -6,7 +6,7 @@ colorTo: yellow
 sdk: docker
 pinned: false
 license: mit
-```
+---
 
 # 🎯 AI Creative Auditor
 
