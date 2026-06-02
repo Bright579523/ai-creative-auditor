@@ -6,32 +6,17 @@ Upload a poster or ad image and get **Design Score**, **Business Score**, score 
 
 **[Live demo on Hugging Face Spaces](https://huggingface.co/spaces/Bright87/ai-creative-auditor)**
 
-<<<<<<< HEAD
 **[Case study (portfolio)](docs/CASE_STUDY.md)** — problem, KPIs, GDPR, limitations.
-=======
-<img width="1880" height="788" alt="image" src="https://github.com/user-attachments/assets/f38578a6-2544-416e-9965-50d5efcd436c" />
 
+<img width="1880" height="788" alt="image" src="https://github.com/user-attachments/assets/f38578a6-2544-416e-9965-50d5efcd436c" />
 
 ⚡ **[Launch the Live Demo on Hugging Face Spaces](https://huggingface.co/spaces/Bright87/ai-creative-auditor)**  
 🔒 *Privacy First: Your raw images never leave the host server. The pipeline processes computer vision tasks locally, sending only anonymous metadata to the LLM API.*
->>>>>>> 601e9fa4013d0a14a6355502244a9a99aa6d702e
 
 ---
 
 ## Features
 
-<<<<<<< HEAD
-| Feature | Technology |
-|---------|------------|
-| People detection | YOLOv8 |
-| Text extraction | EasyOCR (EN + TH) |
-| Color analytics | K-Means + HEX + coverage % + psychology tags |
-| Accessibility signal | WCAG contrast heuristic on OCR regions |
-| AI evaluation | Groq API (Llama 3.3 70B) + Pydantic schema |
-| Score breakdown | visual_hierarchy, color_psychology, message_clarity, audience_fit |
-| Analytics | DuckDB + Streamlit (distributions, segments, CSV export) |
-| A/B comparison | Side-by-side two creatives |
-=======
 ### Where it started (V1)
 The project began as a simple prototype. Users uploaded a single image, and the system extracted text, counted people, and used an LLM to generate a single design score with a brief feedback block. 
 
@@ -54,7 +39,6 @@ While the prototype worked, it didn't solve real-world problems. Marketers neede
 * **Instant Startups**: YOLOv8 and EasyOCR models are pre-cached inside the Docker image during the build stage. You no longer have to wait minutes for model weights to download on first run.
 * **No Layout Jumps**: Added structural CSS min-height rules and clean fade-in animations to eliminate annoying screen flickering when switching tabs.
 * **Stable DB Storage**: Re-architected DuckDB data pipelines to support Git LFS, with custom scripts for deploying binary-heavy histories to Hugging Face Spaces cleanly.
->>>>>>> 601e9fa4013d0a14a6355502244a9a99aa6d702e
 
 ---
 
@@ -74,14 +58,21 @@ User Upload → vision_ops (local CV) → Groq LLM (structured JSON) → DuckDB 
 
 ```
 ├── app.py                 # Streamlit UI (Analyze, A/B, Analytics)
-├── ui_helpers.py          # Charts, gauges, audit rendering
-├── vision_ops.py          # Computer vision pipeline
-├── run_pipeline.py        # Groq evaluation + batch pipeline
-├── schemas.py             # Pydantic models
-├── database_ops.py        # DuckDB writes
-├── init_db.py             # Schema v2 setup / migration
-├── migrate_db_v2.py       # Run migration helper
-├── assets/custom.css      # Streamlit styles
+├── core/                  # Configuration and Schemas
+│   ├── config.py
+│   └── schemas.py
+├── vision/                # Computer vision operations
+│   └── vision_ops.py
+├── pipeline/              # LLM evaluation and batch processing
+│   └── run_pipeline.py
+├── db/                    # DuckDB database and scripts
+│   ├── database_ops.py
+│   ├── init_db.py
+│   ├── check_db.py
+│   └── migrate_db_v2.py
+├── ui/                    # Streamlit components
+│   └── ui_helpers.py
+├── assets/custom.css      # Custom styles
 ├── docs/CASE_STUDY.md     # Portfolio case study
 ├── tests/                 # pytest suite
 ├── notebooks/             # EDA and evaluation notebooks
