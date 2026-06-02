@@ -1,6 +1,6 @@
 import json
 
-from vision_ops import (
+from vision.vision_ops import (
     check_wcag_contrast,
     extract_color_analytics,
     get_color_name_hsv,
@@ -39,7 +39,7 @@ def test_extract_color_analytics_structure(sample_image):
 
 
 def test_check_wcag_no_text_regions(sample_image, monkeypatch):
-    monkeypatch.setattr("vision_ops.extract_text_with_boxes", lambda _path: [])
+    monkeypatch.setattr("vision.vision_ops.extract_text_with_boxes", lambda _path: [])
     wcag = check_wcag_contrast(sample_image)
     assert wcag["wcag_aa_pass"] is True
     assert wcag["regions_checked"] == 0

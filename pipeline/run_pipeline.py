@@ -1,5 +1,3 @@
-import config  # noqa: F401 — loads .env for local dev
-
 import glob
 import json
 import os
@@ -7,9 +5,10 @@ import os
 from groq import Groq
 from pydantic import ValidationError
 
-from database_ops import save_evaluation_to_db
-from schemas import CreativeAuditResult
-from vision_ops import PIPELINE_VERSION, analyze_image_vision, color_analytics_to_json
+from core import config  # noqa: F401 — loads .env for local dev
+from core.schemas import CreativeAuditResult
+from db.database_ops import save_evaluation_to_db
+from vision.vision_ops import PIPELINE_VERSION, analyze_image_vision, color_analytics_to_json
 
 PIPELINE_VERSION_STR = PIPELINE_VERSION
 

@@ -1,5 +1,3 @@
-import config  # noqa: F401 — loads .env for local dev
-
 import json
 import re
 
@@ -9,6 +7,9 @@ import plotly.express as px
 import streamlit as st
 from PIL import Image
 
+from core import config  # noqa: F401 — loads .env for local dev
+
+
 # region agent log
 def _agent_log_app_import() -> None:
     import json
@@ -17,7 +18,7 @@ def _agent_log_app_import() -> None:
 
     log_path = Path(__file__).resolve().parent / "debug-990a14.log"
     try:
-        from ui_helpers import open_uploaded_image as _oui  # noqa: F401
+        from ui.ui_helpers import open_uploaded_image as _oui  # noqa: F401
 
         ok, err = True, None
     except ImportError as e:
@@ -41,7 +42,7 @@ def _agent_log_app_import() -> None:
 _agent_log_app_import()
 # endregion
 
-from ui_helpers import (
+from ui.ui_helpers import (
     load_custom_css,
     open_uploaded_image,
     render_audit_result,
@@ -157,30 +158,26 @@ st.markdown(
     <div style="background-color: #FFFFFF; border-radius: 16px; padding: 24px; box-shadow: 0 10px 40px rgba(15, 23, 42, 0.03); border: 1px solid #E2E8F0; margin-bottom: 2rem;">
         <h3 style="font-family: 'Poppins', sans-serif; font-weight: 800; font-size: 1.2rem; color: #1E3A8A; margin-bottom: 12px; margin-top: 0px;">💡 Quick Start & Platform Walkthrough:</h3>
         <ol style="margin-left: 20px; font-family: 'Inter', sans-serif; font-size: 0.95rem; color: #475569; line-height: 1.6; padding-left: 0px;">
-            <li><b>1. AI Creative Audit:</b> Upload a single ad creative to run local CV analytics (YOLOv8, EasyOCR, K-Means) and get instant structured scoring + strategic feedback.</li>
-            <li><b>2. A/B Creative Comparison:</b> Upload two creative variations (e.g. text/color tweaks) to compare their scores and delta analysis side-by-side.</li>
-            <li><b>3. Mock Analytics:</b> Benchmarks all analyzed creatives, segment performance, and exports DuckDB historical data to CSV for downstream marketing reports.</li>
-            <li><b>4. System Architecture:</b> Review the visual flow diagram of the platform architecture, data handling, and GDPR compliance details.</li>
+            <li><b>Analyze Tab:</b> Upload a single ad creative to run local CV analytics (YOLOv8, EasyOCR, K-Means) and get instant structured scoring + strategic feedback.</li>
+            <li><b>A/B Compare Tab:</b> Upload two creative variations (e.g. text/color tweaks) to compare their scores and delta analysis side-by-side.</li>
+            <li><b>Analytics Tab:</b> Benchmarks all analyzed creatives, segment performance, and exports DuckDB historical data to CSV for downstream marketing reports.</li>
         </ol>
     </div>
     """,
     unsafe_allow_html=True,
 )
 
-tab_analyze, tab_ab, tab_analytics, tab_overview = st.tabs([
-    "🎯 1. AI Creative Audit", 
-    "⚖️ 2. A/B Creative Comparison", 
-    "📈 3. Mock Analytics", 
-    "⚙️ 4. System Architecture"
-])
+tab_analyze, tab_ab, tab_analytics, tab_methodology = st.tabs(["Analyze", "A/B Compare", "Analytics", "Methodology & Architecture"])
 
 
 # ─────────────────────────────────────────────
 # TAB 1: Single creative analysis
 # ─────────────────────────────────────────────
 with tab_analyze:
-    st.markdown("<h2 style='text-align: center; color: #1E3A8A; font-weight: 800; font-family: Poppins, sans-serif; margin-bottom: 0px;'>🎯 Instant AI Creative Audit</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #64748B; margin-bottom: 25px;'>Upload a single ad creative to run local CV analytics (YOLOv8, EasyOCR, K-Means) and get instant structured scoring.</p>", unsafe_allow_html=True)
+    st.markdown(
+        "<p class='upload-subtitle'>Upload one ad creative for instant audit</p>",
+        unsafe_allow_html=True,
+    )
     uploaded_file = st.file_uploader(
         "Upload image",
         type=["jpg", "jpeg", "png"],
@@ -202,7 +199,7 @@ with tab_analyze:
                     try:
                         res, vision_data = run_single_analysis(uploaded_file)
                         if res:
-                            render_audit_result(res, vision_data, key_prefix="tab1")
+                            render_audit_result(res, vision_data)
                         else:
                             st.error("LLM evaluation failed. Check GROQ_API_KEY.")
                     except Exception as e:
@@ -215,8 +212,10 @@ with tab_analyze:
 # TAB 2: A/B comparison
 # ─────────────────────────────────────────────
 with tab_ab:
-    st.markdown("<h2 style='text-align: center; color: #1E3A8A; font-weight: 800; font-family: Poppins, sans-serif; margin-bottom: 0px;'>⚖️ A/B Creative Comparison</h2>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align: center; color: #64748B; margin-bottom: 25px;'>Upload two creative variations to compare their AI scores and delta analysis side-by-side.</p>", unsafe_allow_html=True)
+    st.markdown(
+        "<p class='upload-subtitle'>Compare two creatives side by side</p>",
+        unsafe_allow_html=True,
+    )
     ab_col1, ab_col2 = st.columns(2)
     with ab_col1:
         file_a = st.file_uploader("Creative A", type=["jpg", "jpeg", "png"], key="ab_a")
@@ -276,10 +275,10 @@ with tab_ab:
                         r1, r2 = st.columns(2)
                         with r1:
                             st.markdown("#### Creative A")
-                            render_audit_result(res_a, vis_a, key_prefix="ab_a")
+                            render_audit_result(res_a, vis_a)
                         with r2:
                             st.markdown("#### Creative B")
-                            render_audit_result(res_b, vis_b, key_prefix="ab_b")
+                            render_audit_result(res_b, vis_b)
                 except Exception as e:
                     st.error(f"Comparison error: {e}")
 
@@ -312,8 +311,7 @@ with tab_analytics:
         low_threshold = 12
         df["needs_improvement"] = df["total_score"] < low_threshold
 
-        st.markdown("<h2 style='text-align: center; color: #1E3A8A; font-weight: 800; font-family: Poppins, sans-serif; margin-bottom: 0px; margin-top: 15px;'>📈 Global Campaign Analytics Dashboard</h2>", unsafe_allow_html=True)
-        st.markdown("<p style='text-align: center; color: #64748B; margin-bottom: 30px;'>Comprehensive view of your historical creative performance and AI-driven benchmarks.</p>", unsafe_allow_html=True)
+        st.subheader("Campaign analytics dashboard")
         k1, k2, k3, k4 = st.columns(4)
         k1.metric("Ads analyzed", len(df))
         k2.metric("Avg design score", f"{df['design_score'].mean():.1f}")
@@ -327,7 +325,25 @@ with tab_analytics:
             "text/csv",
         )
 
-
+        chart_col1, chart_col2 = st.columns(2)
+        with chart_col1:
+            fig_d = px.histogram(
+                df,
+                x="design_score",
+                nbins=10,
+                title="Design score distribution",
+                color_discrete_sequence=["#0EA5E9"],
+            )
+            st.plotly_chart(fig_d, use_container_width=True)
+        with chart_col2:
+            fig_b = px.histogram(
+                df,
+                x="business_score",
+                nbins=10,
+                title="Business score distribution",
+                color_discrete_sequence=["#10B981"],
+            )
+            st.plotly_chart(fig_b, use_container_width=True)
 
         if "person_count" in df.columns:
             seg = (
@@ -351,7 +367,7 @@ with tab_analytics:
                 psych_df = pd.Series(psych_tags).value_counts().reset_index()
                 psych_df.columns = ["psychology", "count"]
                 fig_p = px.pie(psych_df, names="psychology", values="count", title="Dominant color psychology mix")
-                st.plotly_chart(fig_p, use_container_width=True, key="analytics_psych_pie")
+                st.plotly_chart(fig_p, use_container_width=True)
 
 
 
@@ -405,10 +421,10 @@ with tab_analytics:
                                 """
                     except Exception:
                         pass
-                    
+
                     category = row['campaign_type_guess'] or 'N/A'
                     people = row.get('person_count', 0)
-                    
+
                     st.html(f"""
                     <div style="background: linear-gradient(135deg, #F8FAFC 0%, #EDF2F7 100%); 
                                 border-radius: 16px; 
@@ -458,17 +474,17 @@ with tab_analytics:
 
         st.markdown("---")
         st.subheader("🖼️ Historical Ad Gallery")
-        
+
         from pathlib import Path
         base_dir = Path(__file__).parent.resolve()
-        
+
         # Filter rows where image exists
         valid_gallery_rows = []
         for idx, row in df.iterrows():
             img_path = base_dir / "ads_dataset" / row['image_filename']
             if img_path.exists():
                 valid_gallery_rows.append(row)
-                
+
         if valid_gallery_rows:
             # Display images in 4 columns
             cols_per_row = 4
@@ -501,7 +517,7 @@ with tab_analytics:
 # ─────────────────────────────────────────────
 # TAB 4: Methodology & Architecture
 # ─────────────────────────────────────────────
-with tab_overview:
+with tab_methodology:
     st.markdown(
         """
         <div style="background-color: #FFFFFF; border-radius: 16px; padding: 32px; box-shadow: 0 10px 40px rgba(15, 23, 42, 0.03); border: 1px solid #E2E8F0; margin-bottom: 2rem;">
@@ -513,9 +529,9 @@ with tab_overview:
         """,
         unsafe_allow_html=True,
     )
-    
+
     col_tech1, col_tech2 = st.columns(2, gap="large")
-    
+
     with col_tech1:
         st.markdown(
             """
@@ -534,7 +550,7 @@ with tab_overview:
             """,
             unsafe_allow_html=True,
         )
-        
+
     with col_tech2:
         st.markdown(
             """
@@ -552,11 +568,11 @@ with tab_overview:
             """,
             unsafe_allow_html=True,
         )
-        
+
     st.markdown("<br>", unsafe_allow_html=True)
-    
+
     col_gdpr, col_kpi = st.columns(2, gap="large")
-    
+
     with col_gdpr:
         st.markdown(
             """
@@ -574,7 +590,7 @@ with tab_overview:
             """,
             unsafe_allow_html=True,
         )
-        
+
     with col_kpi:
         st.markdown(
             """

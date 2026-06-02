@@ -3,10 +3,10 @@
 import os
 from pathlib import Path
 
-from PIL import Image, ImageOps
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
+from PIL import Image, ImageOps
 
 
 def load_custom_css() -> None:
@@ -63,7 +63,7 @@ def render_score_breakdown(breakdown: dict) -> None:
             st.metric(label, breakdown.get(key, "—"))
 
 
-def render_color_chart(colors: list[dict], key_prefix: str = "single") -> None:
+def render_color_chart(colors: list[dict]) -> None:
     if not colors:
         return
     st.markdown("**Color palette analytics**")
@@ -75,7 +75,7 @@ def render_color_chart(colors: list[dict], key_prefix: str = "single") -> None:
         title="Dominant colors by pixel coverage",
     )
     fig.update_layout(showlegend=True, height=320, paper_bgcolor="rgba(0,0,0,0)")
-    st.plotly_chart(fig, use_container_width=True, key=f"{key_prefix}_color_bar")
+    st.plotly_chart(fig, use_container_width=True)
     for c in colors:
         st.caption(f"{c['hex']} · {c['name']} · {c['coverage_pct']}% · {c['psychology']}")
 
@@ -99,19 +99,17 @@ def render_wcag_badge(wcag: dict) -> None:
         st.caption("WCAG: no text regions detected for contrast check.")
 
 
-def render_audit_result(res: dict, vision_data: dict, key_prefix: str = "single") -> None:
+def render_audit_result(res: dict, vision_data: dict) -> None:
     g1, g2 = st.columns(2)
     with g1:
         st.plotly_chart(
             create_gauge_chart(res["design_score"], "Design Score", "#0EA5E9"),
             use_container_width=True,
-            key=f"{key_prefix}_gauge_design",
         )
     with g2:
         st.plotly_chart(
             create_gauge_chart(res["business_score"], "Business Score", "#10B981"),
             use_container_width=True,
-            key=f"{key_prefix}_gauge_biz",
         )
 
     render_score_breakdown(res.get("score_breakdown", {}))
@@ -120,7 +118,7 @@ def render_audit_result(res: dict, vision_data: dict, key_prefix: str = "single"
     if vision_data.get("color_insight"):
         st.info(vision_data["color_insight"])
 
-    render_color_chart(vision_data.get("color_analytics", []), key_prefix=key_prefix)
+    render_color_chart(vision_data.get("color_analytics", []))
 
     st.markdown(
         f"<div class='ai-rec-box'><strong>Recommendation:</strong><br><br>{res['actionable_feedback']}</div>",
@@ -153,8 +151,8 @@ def save_uploaded_image(uploaded_file, path: str) -> None:
 
 def run_single_analysis(uploaded_file, temp_prefix: str = "temp_") -> tuple[dict | None, dict | None]:
     """Analyze one uploaded file; returns (llm_result, vision_data)."""
-    from run_pipeline import evaluate_with_groq
-    from vision_ops import analyze_image_vision
+    from pipeline.run_pipeline import evaluate_with_groq
+    from vision.vision_ops import analyze_image_vision
 
     temp_path = f"{temp_prefix}{uploaded_file.name}"
     try:

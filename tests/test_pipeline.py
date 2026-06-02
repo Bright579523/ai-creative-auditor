@@ -3,8 +3,8 @@ import json
 import pytest
 from pydantic import ValidationError
 
-from run_pipeline import build_record, evaluate_with_groq
-from schemas import CreativeAuditResult
+from core.schemas import CreativeAuditResult
+from pipeline.run_pipeline import build_record, evaluate_with_groq
 
 
 def test_creative_audit_result_validation(mock_groq_response):
@@ -65,7 +65,7 @@ def test_evaluate_with_groq_mock(monkeypatch, mock_groq_response):
                     return FakeCompletion()
 
     monkeypatch.setenv("GROQ_API_KEY", "test-key")
-    monkeypatch.setattr("run_pipeline.Groq", lambda api_key=None: FakeClient())
+    monkeypatch.setattr("pipeline.run_pipeline.Groq", lambda api_key=None: FakeClient())
 
     vision = {
         "person_count": 0,

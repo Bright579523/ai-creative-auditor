@@ -2,8 +2,8 @@ import json
 
 import duckdb
 
-from database_ops import save_evaluation_to_db
-from init_db import setup_database
+from db.database_ops import save_evaluation_to_db
+from db.init_db import setup_database
 
 
 def test_save_and_query(tmp_path):
